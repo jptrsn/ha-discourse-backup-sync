@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discourse Backup Sync</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 800px;
+            margin: 0 auto;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab:hover {
+            background: #e9ecef;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom-color: #667eea;
+            font-weight: 600;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+
+        .status-configured {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-not-configured {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            margin-right: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .alert-info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .info-box {
+            background: #f8f9fa;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+            vertical-align: middle;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 12px;
+        }
+
+        @media (max-width: 600px) {
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .backup-list {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Discourse Backup Sync</h1>
+            <p id="statusText">Configure your backup system</p>
+        </div>
+
+        <div class="tabs">
+            <div class="tab active" onclick="showTab('setup')">Setup</div>
+            <div class="tab" onclick="showTab('settings')">Settings</div>
+            <div class="tab" onclick="showTab('status')">Status</div>
+        </div>
+
+        <div id="alertBox" class="hidden"></div>
+
+        <!-- Setup Tab -->
+        <div id="setup-tab" class="tab-content active">
+            <div id="setupContent"></div>
+        </div>
+
+        <!-- Settings Tab -->
+        <div id="settings-tab" class="tab-content">
+            <h2 style="margin-bottom: 20px;">Backup Settings</h2>
+
+            <form id="settingsForm">
+                <div class="form-group">
+                    <label for="settings_backup_path">Remote Backup Path</label>
+                    <input type="text" id="settings_backup_path" placeholder="/var/lib/docker/volumes/discourse_data/_data/backups/default" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="settings_storage_path">Local Backup Storage Path</label>
+                    <input type="text" id="settings_storage_path" placeholder="/backup/discourse" required>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Where backups will be stored on your Home Assistant system
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label for="settings_schedule">Backup Schedule (Cron Format)</label>
+                    <input type="text" id="settings_schedule" placeholder="0 3 * * *" required>
+                    <small style="color: #666; display: block; margin-top: 5px;">
+                        Examples: "0 3 * * *" (3 AM daily), "0 */6 * * *" (every 6 hours), "0 2 * * 0" (2 AM Sundays)
+                    </small>
+                </div>
+
+                <div class="config-grid">
+                    <div class="form-group">
+                        <label for="settings_daily">Daily Retention (days)</label>
+                        <input type="number" id="settings_daily" min="1" max="365" value="7" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settings_weekly">Weekly Retention (days)</label>
+                        <input type="number" id="settings_weekly" min="1" max="365" value="90" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="settings_monthly">Monthly Retention (days)</label>
+                        <input type="number" id="settings_monthly" min="1" max="3650" value="730" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" id="saveSettingsBtn">Save Settings</button>
+                <button type="button" class="btn btn-secondary" id="testPathBtn">Test Backup Path</button>
+            </form>
+
+            <div id="backupListContainer" class="hidden">
+                <h3 style="margin-top: 30px; margin-bottom: 10px;">Recent Backups</h3>
+                <div id="backupList" class="backup-list"></div>
+            </div>
+        </div>
+
+        <!-- Status Tab -->
+        <div id="status-tab" class="tab-content">
+            <h2 style="margin-bottom: 20px;">Connection Status</h2>
+
+            <div class="info-box" id="statusInfo">
+                <strong>Status:</strong> <span id="sshStatus">Loading...</span><br>
+                <strong>Server:</strong> <span id="statusServer">-</span><br>
+                <strong>Backup Path:</strong> <span id="statusPath">-</span><br>
+                <strong>Schedule:</strong> <span id="statusSchedule">-</span>
+            </div>
+
+            <button class="btn btn-primary" id="testConnectionBtn">Test Connection</button>
+            <button class="btn btn-secondary" id="resetSshBtn">Reset SSH</button>
+        </div>
+    </div>
+
+    <script>
+        let currentConfig = {};
+
+        // Build correct API URL for Ingress
+        function getApiUrl(endpoint) {
+            const currentUrl = window.location.href;
+            const baseUrl = currentUrl.endsWith('/') ? currentUrl.slice(0, -1) : currentUrl;
+            return `${baseUrl}/${endpoint}`;
+        }
+
+        function showAlert(message, type) {
+            const alertBox = document.getElementById('alertBox');
+            alertBox.className = `alert alert-${type}`;
+            alertBox.textContent = message;
+            alertBox.classList.remove('hidden');
+
+            if (type === 'success') {
+                setTimeout(() => {
+                    alertBox.classList.add('hidden');
+                }, 5000);
+            }
+        }
+
+        function setLoading(buttonId, loading) {
+            const button = document.getElementById(buttonId);
+            if (loading) {
+                button.disabled = true;
+                if (!button.querySelector('.loading')) {
+                    button.innerHTML += '<span class="loading"></span>';
+                }
+            } else {
+                button.disabled = false;
+                const loadingSpan = button.querySelector('.loading');
+                if (loadingSpan) {
+                    loadingSpan.remove();
+                }
+            }
+        }
+
+        function showTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+
+            // Load data for the tab
+            if (tabName === 'status') {
+                loadStatus();
+            }
+        }
+
+        async function loadConfig() {
+            try {
+                const response = await fetch(getApiUrl('api/config'));
+                currentConfig = await response.json();
+                updateUI();
+            } catch (error) {
+                console.error('Failed to load config:', error);
+            }
+        }
+
+        function updateUI() {
+            const setupContent = document.getElementById('setupContent');
+
+            if (currentConfig.ssh_configured) {
+                setupContent.innerHTML = `
+                    <div class="status-badge status-configured">✓ SSH Configured</div>
+                    <div class="info-box">
+                        <strong>✓ SSH is configured and ready!</strong><br>
+                        Your backups will sync automatically according to your schedule. Configure retention settings in the Settings tab or test your connection in the Status tab.
+                    </div>
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 6px;">
+                        <strong>Server:</strong> ${currentConfig.remote_user}@${currentConfig.remote_host}:${currentConfig.remote_port}<br>
+                        <strong>Backup Path:</strong> ${currentConfig.remote_backup_path}
+                    </div>
+                `;
+            } else {
+                setupContent.innerHTML = `
+                    <div class="status-badge status-not-configured">⚠ SSH Not Configured</div>
+                    <div class="info-box">
+                        <strong>ℹ️ First Time Setup</strong><br>
+                        Enter your Discourse server details and password below. We'll generate an SSH key and automatically configure passwordless authentication for you.
+                    </div>
+                    <form id="sshForm">
+                        <div class="form-group">
+                            <label for="host">Server Hostname or IP</label>
+                            <input type="text" id="host" name="host" placeholder="discourse.example.com" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="port">SSH Port</label>
+                            <input type="number" id="port" name="port" value="22" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="user">SSH Username</label>
+                            <input type="text" id="user" name="user" placeholder="root" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="password">SSH Password (used once, not stored)</label>
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        </div>
+
+                        <button type="submit" class="btn btn-primary" id="setupBtn">
+                            Setup SSH Authentication
+                        </button>
+                    </form>
+                `;
+            }
+
+            // Update settings form
+            document.getElementById('settings_backup_path').value = currentConfig.remote_backup_path || '';
+            document.getElementById('settings_storage_path').value = currentConfig.backup_storage_path || '/backup/discourse';
+            document.getElementById('settings_schedule').value = currentConfig.schedule || '0 3 * * *';
+            document.getElementById('settings_daily').value = currentConfig.daily_retention_days || 7;
+            document.getElementById('settings_weekly').value = currentConfig.weekly_retention_days || 90;
+            document.getElementById('settings_monthly').value = currentConfig.monthly_retention_days || 730;
+
+            // Re-attach event listeners for dynamically created forms
+            attachEventListeners();
+        }
+
+        function attachEventListeners() {
+            // SSH Setup Form
+            const sshForm = document.getElementById('sshForm');
+            if (sshForm) {
+                sshForm.onsubmit = async (e) => {
+                    e.preventDefault();
+
+                    const formData = {
+                        host: document.getElementById('host').value,
+                        port: parseInt(document.getElementById('port').value),
+                        user: document.getElementById('user').value,
+                        password: document.getElementById('password').value
+                    };
+
+                    setLoading('setupBtn', true);
+
+                    try {
+                        const response = await fetch(getApiUrl('api/setup-ssh'), {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(formData)
+                        });
+
+                        const data = await response.json();
+
+                        if (data.success) {
+                            showAlert(data.message, 'success');
+                            setTimeout(() => {
+                                loadConfig();
+                            }, 1000);
+                        } else {
+                            showAlert(data.message, 'error');
+                            setLoading('setupBtn', false);
+                        }
+                    } catch (error) {
+                        showAlert('Failed to setup SSH: ' + error.message, 'error');
+                        setLoading('setupBtn', false);
+                    }
+                };
+            }
+        }
+
+        // Settings Form
+        document.getElementById('settingsForm').onsubmit = async (e) => {
+            e.preventDefault();
+
+            const settings = {
+                remote_backup_path: document.getElementById('settings_backup_path').value,
+                backup_storage_path: document.getElementById('settings_storage_path').value,
+                schedule: document.getElementById('settings_schedule').value,
+                daily_retention_days: parseInt(document.getElementById('settings_daily').value),
+                weekly_retention_days: parseInt(document.getElementById('settings_weekly').value),
+                monthly_retention_days: parseInt(document.getElementById('settings_monthly').value)
+            };
+
+            setLoading('saveSettingsBtn', true);
+
+            try {
+                const response = await fetch(getApiUrl('api/config'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(settings)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    loadConfig();
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to save settings: ' + error.message, 'error');
+            } finally {
+                setLoading('saveSettingsBtn', false);
+            }
+        };
+
+        // Test Backup Path
+        document.getElementById('testPathBtn').onclick = async () => {
+            setLoading('testPathBtn', true);
+            document.getElementById('backupListContainer').classList.add('hidden');
+
+            try {
+                const response = await fetch(getApiUrl('api/test-backup-path'), {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    if (data.backups) {
+                        document.getElementById('backupList').textContent = data.backups.join('\n');
+                        document.getElementById('backupListContainer').classList.remove('hidden');
+                    }
+                } else {
+                    showAlert(data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to test backup path: ' + error.message, 'error');
+            } finally {
+                setLoading('testPathBtn', false);
+            }
+        };
+
+        // Test Connection
+        document.getElementById('testConnectionBtn').onclick = async () => {
+            setLoading('testConnectionBtn', true);
+
+            try {
+                const response = await fetch(getApiUrl('api/test-connection'), {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('✓ ' + data.message, 'success');
+                } else {
+                    showAlert('✗ ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to test connection: ' + error.message, 'error');
+            } finally {
+                setLoading('testConnectionBtn', false);
+            }
+        };
+
+        // Reset SSH
+        document.getElementById('resetSshBtn').onclick = async () => {
+            if (!confirm('Are you sure you want to reset SSH configuration? You will need to set it up again.')) {
+                return;
+            }
+
+            setLoading('resetSshBtn', true);
+
+            try {
+                const response = await fetch(getApiUrl('api/reset-ssh'), {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert(data.message, 'success');
+                    setTimeout(() => {
+                        loadConfig();
+                        showTab('setup');
+                    }, 1000);
+                } else {
+                    showAlert(data.message, 'error');
+                    setLoading('resetSshBtn', false);
+                }
+            } catch (error) {
+                showAlert('Failed to reset SSH: ' + error.message, 'error');
+                setLoading('resetSshBtn', false);
+            }
+        };
+
+        function loadStatus() {
+            if (currentConfig.ssh_configured) {
+                document.getElementById('sshStatus').textContent = '✓ Connected';
+                document.getElementById('statusServer').textContent =
+                    `${currentConfig.remote_user}@${currentConfig.remote_host}:${currentConfig.remote_port}`;
+                document.getElementById('statusPath').textContent = currentConfig.remote_backup_path;
+                document.getElementById('statusSchedule').textContent = currentConfig.schedule || '0 3 * * * (daily at 3 AM)';
+            } else {
+                document.getElementById('sshStatus').textContent = '✗ Not configured';
+                document.getElementById('statusServer').textContent = '-';
+                document.getElementById('statusPath').textContent = '-';
+                document.getElementById('statusSchedule').textContent = '-';
+            }
+        }
+
+        // Initialize
+        loadConfig();
+    </script>
+</body>
+</html>
