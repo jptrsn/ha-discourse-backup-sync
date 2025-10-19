@@ -29,7 +29,7 @@ Weekly backups are created every Sunday, and monthly backups are created on the 
 1. **Add this repository** to your Home Assistant add-on store:
    - Go to **Settings → Add-ons → Add-on Store**
    - Click the menu (⋮) → **Repositories**
-   - Add: `https://github.com/yourusername/ha-discourse-backup-sync`
+   - Add: `https://github.com/jptrsn/ha-discourse-backup-sync`
 
 2. **Install** the "Discourse Backup Sync" add-on
 
@@ -90,8 +90,6 @@ The add-on will:
 Your backups will now sync automatically according to the schedule. Check the Status tab anytime to test your connection!
 
 ## Web UI Configuration
-
-All configuration is done through the beautiful web UI with three tabs:
 
 ### Setup Tab
 - Initial SSH configuration
@@ -241,17 +239,9 @@ To backup multiple Discourse servers, install multiple instances of this add-on 
 - All communications are encrypted via SSH
 - Web UI is only accessible within your Home Assistant network
 
-## What's Backed Up?
-
-Discourse backups include everything you need for a complete restore:
-- ✅ Database (all posts, users, settings)
-- ✅ Uploaded files (avatars, attachments, images)
-- ✅ Theme assets
-- ✅ Plugin data
-
 ## How It Works
 
-1. **Scheduled Sync**: At your configured schedule, the add-on connects to your Discourse server
+1. **Scheduled Sync**: At your configured schedule, the add-on connects to your Discourse server using the SSH key you created using the web UI.
 2. **Download Latest**: Downloads the most recent backup file
 3. **Smart Storage**:
    - Stores in daily folder
@@ -262,9 +252,9 @@ Discourse backups include everything you need for a complete restore:
 ## Support
 
 For issues, questions, or contributions:
-- 🐛 [Report a Bug](https://github.com/yourusername/ha-discourse-backup-sync/issues)
-- 💡 [Request a Feature](https://github.com/yourusername/ha-discourse-backup-sync/issues)
-- 📖 [View Documentation](https://github.com/yourusername/ha-discourse-backup-sync)
+- [Report a Bug](https://github.com/jptrsn/ha-discourse-backup-sync/issues)
+- [Request a Feature](https://github.com/jptrsn/ha-discourse-backup-sync/issues)
+- [View Documentation](https://github.com/jptrsn/ha-discourse-backup-sync)
 
 ## License
 

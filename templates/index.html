@@ -287,17 +287,17 @@
                 <div class="config-grid">
                     <div class="form-group">
                         <label for="settings_daily">Daily Retention (days)</label>
-                        <input type="number" id="settings_daily" min="1" max="365" value="7" required>
+                        <input type="number" id="settings_daily" min="1" max="31" value="7" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="settings_weekly">Weekly Retention (days)</label>
-                        <input type="number" id="settings_weekly" min="1" max="365" value="90" required>
+                        <label for="settings_weekly">Weekly Retention (weeks)</label>
+                        <input type="number" id="settings_weekly" min="1" max="52" value="3" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="settings_monthly">Monthly Retention (days)</label>
-                        <input type="number" id="settings_monthly" min="1" max="3650" value="730" required>
+                        <label for="settings_monthly">Monthly Retention (months)</label>
+                        <input type="number" id="settings_monthly" min="1" max="60" value="24" required>
                     </div>
                 </div>
 
@@ -504,8 +504,8 @@
                 backup_storage_path: document.getElementById('settings_storage_path').value,
                 schedule: document.getElementById('settings_schedule').value,
                 daily_retention_days: parseInt(document.getElementById('settings_daily').value),
-                weekly_retention_days: parseInt(document.getElementById('settings_weekly').value),
-                monthly_retention_days: parseInt(document.getElementById('settings_monthly').value)
+                weekly_retention_days: parseInt(document.getElementById('settings_weekly').value * 7),
+                monthly_retention_days: parseInt(document.getElementById('settings_monthly').value * 31)
             };
 
             setLoading('saveSettingsBtn', true);
