@@ -22,9 +22,11 @@ WORKDIR /app
 
 # Copy scripts
 COPY run.sh /
+COPY backup.sh /
 COPY web_ui.py /app/
 COPY templates/ /app/templates/
 
-RUN chmod a+x /run.sh
+# Make scripts executable
+RUN chmod a+x /run.sh /backup.sh
 
 CMD [ "/run.sh" ]

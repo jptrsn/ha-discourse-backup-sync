@@ -85,8 +85,13 @@ if [ "$SSH_CONFIGURED" = "true" ] && [ -n "$REMOTE_HOST" ]; then
     bashio::log.info "Local storage: $LOCAL_BACKUP_BASE"
     bashio::log.info "Retention - Daily: ${DAILY_RETENTION}d, Weekly: ${WEEKLY_RETENTION}d, Monthly: ${MONTHLY_RETENTION}d"
 
-    # Run initial sync
-    /backup.sh
+    # Run initial sync (don't exit if it fails)
+    bashio::log.info "Running initial backup sync..."
+    if /backup.sh; then
+        bashio::log.info "Initial backup sync completed"
+    else
+        bashio::log.warning "Initial backup sync failed - will retry on schedule"
+    fi
 
     # Start cron in background
     bashio::log.info "Starting cron daemon..."

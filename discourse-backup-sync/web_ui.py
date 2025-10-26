@@ -419,17 +419,22 @@ def delete_backup():
 def manual_sync():
     """Trigger a manual backup sync"""
     try:
-        config = load_config()
-
         if not os.path.exists(SSH_KEY_PATH):
             return jsonify({'success': False, 'message': 'SSH not configured'}), 400
+
+        # Check if backup.sh exists
+        if not os.path.exists('/backup.sh'):
+            logger.error("backup.sh not found at /backup.sh")
+            return jsonify({'success': False, 'message': 'Backup script not found'}), 500
+
+        logger.info("Starting manual backup sync...")
 
         # Run the backup script
         result = subprocess.run(
             ['/backup.sh'],
             capture_output=True,
             text=True,
-            timeout=300
+            timeout=300  # 5 minute timeout
         )
 
         if result.returncode == 0:
@@ -442,13 +447,15 @@ def manual_sync():
             return jsonify({
                 'success': False,
                 'message': 'Backup sync failed',
-                'error': result.stderr
+                'error': result.stderr,
+                'output': result.stdout
             }), 500
 
     except subprocess.TimeoutExpired:
+        logger.error("Backup sync timed out")
         return jsonify({'success': False, 'message': 'Backup sync timed out'}), 500
     except Exception as e:
-        logger.error(f"Manual sync failed: {e}")
+        logger.error(f"Manual sync failed: {e}", exc_info=True)
         return jsonify({'success': False, 'message': str(e)}), 500
 
 if __name__ == '__main__':
