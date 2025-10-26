@@ -426,10 +426,10 @@ def manual_sync():
 
         # Run the backup script
         result = subprocess.run(
-            ['/run_backup.sh'],
+            ['/backup.sh'],
             capture_output=True,
             text=True,
-            timeout=300  # 5 minute timeout
+            timeout=300
         )
 
         if result.returncode == 0:
