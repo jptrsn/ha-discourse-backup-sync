@@ -2,7 +2,7 @@ name: Discourse Backup Sync
 version: "0.1.0"
 slug: discourse_backup_sync
 description: Automated backup sync for Discourse forums with intelligent retention (daily, weekly, monthly)
-url: https://github.com/yourusername/ha-discourse-backup-sync
+url: https://github.com/jptrsn/ha-discourse-backup-sync
 arch:
   - armhf
   - armv7
@@ -23,12 +23,7 @@ map:
   - backup:rw
   - share:rw
   - ssl:ro
-ports:
-  8099/tcp: 8099
-ports_description:
-  8099/tcp: Web UI for configuration
 panel_icon: mdi:backup-restore
 panel_title: Discourse Backup Sync
-webui: http://[HOST]:[PORT:8099]
 ingress: true
 ingress_port: 8099

@@ -355,5 +355,101 @@ def reset_ssh():
     except Exception as e:
         return jsonify({'success': False, 'message': str(e)}), 500
 
+@app.route('/api/list-backups', methods=['GET'])
+def list_backups():
+    """List all local backups"""
+    try:
+        config = load_config()
+        base_path = config.get('backup_storage_path', '/backup/discourse')
+
+        backups = []
+
+        for backup_type in ['daily', 'weekly', 'monthly']:
+            path = os.path.join(base_path, backup_type)
+            if os.path.exists(path):
+                for filename in os.listdir(path):
+                    if filename.endswith('.tar.gz'):
+                        filepath = os.path.join(path, filename)
+                        stat = os.stat(filepath)
+                        backups.append({
+                            'filename': filename,
+                            'type': backup_type,
+                            'size': stat.st_size,
+                            'created': stat.st_mtime,
+                            'path': filepath
+                        })
+
+        # Sort by creation time, newest first
+        backups.sort(key=lambda x: x['created'], reverse=True)
+
+        return jsonify({'success': True, 'backups': backups})
+    except Exception as e:
+        logger.error(f"Failed to list backups: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/delete-backup', methods=['POST'])
+def delete_backup():
+    """Delete a specific backup"""
+    try:
+        data = request.get_json()
+        filepath = data.get('filepath')
+
+        if not filepath:
+            return jsonify({'success': False, 'message': 'No filepath provided'}), 400
+
+        # Security check: ensure path is within backup directory
+        config = load_config()
+        base_path = config.get('backup_storage_path', '/backup/discourse')
+
+        if not filepath.startswith(base_path):
+            return jsonify({'success': False, 'message': 'Invalid path'}), 403
+
+        if os.path.exists(filepath):
+            os.remove(filepath)
+            logger.info(f"Deleted backup: {filepath}")
+            return jsonify({'success': True, 'message': 'Backup deleted successfully'})
+        else:
+            return jsonify({'success': False, 'message': 'Backup file not found'}), 404
+
+    except Exception as e:
+        logger.error(f"Failed to delete backup: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
+@app.route('/api/manual-sync', methods=['POST'])
+def manual_sync():
+    """Trigger a manual backup sync"""
+    try:
+        config = load_config()
+
+        if not os.path.exists(SSH_KEY_PATH):
+            return jsonify({'success': False, 'message': 'SSH not configured'}), 400
+
+        # Run the backup script
+        result = subprocess.run(
+            ['/run_backup.sh'],
+            capture_output=True,
+            text=True,
+            timeout=300  # 5 minute timeout
+        )
+
+        if result.returncode == 0:
+            return jsonify({
+                'success': True,
+                'message': 'Backup sync completed successfully',
+                'output': result.stdout
+            })
+        else:
+            return jsonify({
+                'success': False,
+                'message': 'Backup sync failed',
+                'error': result.stderr
+            }), 500
+
+    except subprocess.TimeoutExpired:
+        return jsonify({'success': False, 'message': 'Backup sync timed out'}), 500
+    except Exception as e:
+        logger.error(f"Manual sync failed: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=8099, debug=False)

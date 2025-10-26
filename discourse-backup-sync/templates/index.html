@@ -13,7 +13,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #247494 0%, #ab4b3b 100%);
             min-height: 100vh;
             padding: 20px;
         }
@@ -28,7 +28,7 @@
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #247494 0%, #ab4b3b 100%);
             color: white;
             padding: 30px;
             text-align: center;
@@ -60,7 +60,7 @@
 
         .tab.active {
             background: white;
-            border-bottom-color: #667eea;
+            border-bottom-color: #247494;
             font-weight: 600;
         }
 
@@ -117,7 +117,7 @@
 
         input:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #247494;
         }
 
         .btn {
@@ -133,7 +133,7 @@
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #247494 0%, #ab4b3b 100%);
             color: white;
         }
 
@@ -188,7 +188,7 @@
 
         .info-box {
             background: #f8f9fa;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #247494;
             padding: 15px;
             margin-bottom: 20px;
             border-radius: 4px;
@@ -201,7 +201,7 @@
             width: 14px;
             height: 14px;
             border: 2px solid #f3f3f3;
-            border-top: 2px solid #667eea;
+            border-top: 2px solid #247494;
             border-radius: 50%;
             animation: spin 1s linear infinite;
             margin-left: 10px;
@@ -236,18 +236,179 @@
             max-height: 300px;
             overflow-y: auto;
         }
+
+        .schedule-presets {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .preset-btn {
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            font-size: 13px;
+        }
+
+        .preset-btn:hover {
+            border-color: #247494;
+            background: #f8f9ff;
+        }
+
+        .preset-btn.active {
+            border-color: #247494;
+            background: #247494;
+            color: white;
+        }
+
+        .preset-btn .time {
+            font-weight: 600;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .preset-btn .desc {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .preset-btn.active .desc {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .custom-schedule-link {
+            color: #247494;
+            text-decoration: none;
+            font-size: 13px;
+            cursor: pointer;
+            display: inline-block;
+            margin-top: 5px;
+        }
+
+        .custom-schedule-link:hover {
+            text-decoration: underline;
+        }
+
+        .schedule-hint {
+            font-size: 12px;
+            color: #28a745;
+            margin-top: 5px;
+            font-style: italic;
+        }
+
+        .backup-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 13px;
+        }
+
+        .backup-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .backup-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .backup-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .backup-type-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .badge-daily {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .badge-weekly {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .badge-monthly {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c82333;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #666;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .sync-button-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sync-info {
+            flex: 1;
+        }
+
+        .sync-info strong {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .sync-info small {
+            color: #666;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Discourse Backup Sync</h1>
-            <p id="statusText">Configure your backup system</p>
+            <p id="statusText">Automatically sync backups from your discourse server to an off-site storage volume on your home assistant</p>
         </div>
 
         <div class="tabs">
             <div class="tab active" onclick="showTab('setup')">Setup</div>
             <div class="tab" onclick="showTab('settings')">Settings</div>
+            <div class="tab" onclick="showTab('backups')">Backups</div>
             <div class="tab" onclick="showTab('status')">Status</div>
         </div>
 
@@ -263,10 +424,14 @@
             <h2 style="margin-bottom: 20px;">Backup Settings</h2>
 
             <form id="settingsForm">
+                <h3 style="margin-bottom: 15px; font-size: 16px;">Remote Server</h3>
+
                 <div class="form-group">
                     <label for="settings_backup_path">Remote Backup Path</label>
                     <input type="text" id="settings_backup_path" placeholder="/var/lib/docker/volumes/discourse_data/_data/backups/default" required>
                 </div>
+
+                <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 16px;">Local Storage</h3>
 
                 <div class="form-group">
                     <label for="settings_storage_path">Local Backup Storage Path</label>
@@ -276,28 +441,60 @@
                     </small>
                 </div>
 
+                <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 16px;">Schedule</h3>
+
                 <div class="form-group">
-                    <label for="settings_schedule">Backup Schedule (Cron Format)</label>
+                    <label>Choose Backup Schedule</label>
+                    <div class="schedule-presets" id="schedulePresets">
+                        <button type="button" class="preset-btn" data-cron="0 3 * * *">
+                            <span class="time">3:00 AM</span>
+                            <span class="desc">Daily</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-cron="0 */6 * * *">
+                            <span class="time">Every 6 hours</span>
+                            <span class="desc">4 times daily</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-cron="0 */12 * * *">
+                            <span class="time">Every 12 hours</span>
+                            <span class="desc">Twice daily</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-cron="0 2 * * 0">
+                            <span class="time">2:00 AM Sunday</span>
+                            <span class="desc">Weekly</span>
+                        </button>
+                        <button type="button" class="preset-btn" data-cron="0 4 1 * *">
+                            <span class="time">4:00 AM 1st</span>
+                            <span class="desc">Monthly</span>
+                        </button>
+                    </div>
+                    <a class="custom-schedule-link" id="showCustomSchedule">Use custom schedule</a>
+                </div>
+
+                <div class="form-group hidden" id="customScheduleGroup">
+                    <label for="settings_schedule">Custom Cron Schedule</label>
                     <input type="text" id="settings_schedule" placeholder="0 3 * * *" required>
+                    <div id="scheduleHint" class="schedule-hint"></div>
                     <small style="color: #666; display: block; margin-top: 5px;">
-                        Examples: "0 3 * * *" (3 AM daily), "0 */6 * * *" (every 6 hours), "0 2 * * 0" (2 AM Sundays)
+                        Format: minute hour day month weekday (e.g., "0 3 * * *" = 3 AM daily)
                     </small>
                 </div>
 
+                <h3 style="margin-top: 30px; margin-bottom: 15px; font-size: 16px;">Retention</h3>
+
                 <div class="config-grid">
                     <div class="form-group">
-                        <label for="settings_daily">Daily Retention (days)</label>
-                        <input type="number" id="settings_daily" min="1" max="31" value="7" required>
+                        <label for="settings_daily">Daily (days)</label>
+                        <input type="number" id="settings_daily" min="1" max="365" value="7" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="settings_weekly">Weekly Retention (weeks)</label>
-                        <input type="number" id="settings_weekly" min="1" max="52" value="3" required>
+                        <label for="settings_weekly">Weekly (days)</label>
+                        <input type="number" id="settings_weekly" min="1" max="365" value="90" required>
                     </div>
 
                     <div class="form-group">
-                        <label for="settings_monthly">Monthly Retention (months)</label>
-                        <input type="number" id="settings_monthly" min="1" max="60" value="24" required>
+                        <label for="settings_monthly">Monthly (days)</label>
+                        <input type="number" id="settings_monthly" min="1" max="3650" value="730" required>
                     </div>
                 </div>
 
@@ -308,6 +505,41 @@
             <div id="backupListContainer" class="hidden">
                 <h3 style="margin-top: 30px; margin-bottom: 10px;">Recent Backups</h3>
                 <div id="backupList" class="backup-list"></div>
+            </div>
+        </div>
+
+        <!-- Backups Tab -->
+        <div id="backups-tab" class="tab-content">
+            <h2 style="margin-bottom: 20px;">Manage Backups</h2>
+
+            <div class="sync-button-container">
+                <div class="sync-info">
+                    <strong>Manual Backup Sync</strong>
+                    <small>Download the latest backup from your Discourse server immediately</small>
+                </div>
+                <button class="btn btn-primary" id="manualSyncBtn">Sync Now</button>
+            </div>
+
+            <div id="backupTabsContainer">
+                <div style="display: flex; gap: 10px; margin-bottom: 20px; border-bottom: 2px solid #e0e0e0;">
+                    <button class="tab" style="flex: initial; border-bottom: 3px solid #247494;" onclick="showBackupType('all')">All Backups</button>
+                    <button class="tab" style="flex: initial;" onclick="showBackupType('daily')">Daily</button>
+                    <button class="tab" style="flex: initial;" onclick="showBackupType('weekly')">Weekly</button>
+                    <button class="tab" style="flex: initial;" onclick="showBackupType('monthly')">Monthly</button>
+                </div>
+
+                <div id="backupsLoading" class="empty-state">
+                    <div class="empty-state-icon">⏳</div>
+                    <p>Loading backups...</p>
+                </div>
+
+                <div id="backupsEmpty" class="empty-state hidden">
+                    <div class="empty-state-icon">📦</div>
+                    <p><strong>No backups found</strong></p>
+                    <small>Click "Sync Now" to download your first backup</small>
+                </div>
+
+                <div id="backupsTable" class="hidden"></div>
             </div>
         </div>
 
@@ -329,6 +561,7 @@
 
     <script>
         let currentConfig = {};
+        let selectedSchedule = null;
 
         // Build correct API URL for Ingress
         function getApiUrl(endpoint) {
@@ -336,6 +569,82 @@
             const baseUrl = currentUrl.endsWith('/') ? currentUrl.slice(0, -1) : currentUrl;
             return `${baseUrl}/${endpoint}`;
         }
+
+        // Parse cron to human readable
+        function cronToHuman(cron) {
+            const parts = cron.trim().split(/\s+/);
+            if (parts.length !== 5) return cron;
+
+            const [min, hour, day, month, weekday] = parts;
+
+            // Common patterns
+            if (cron === '0 3 * * *') return 'Daily at 3:00 AM';
+            if (cron === '0 */6 * * *') return 'Every 6 hours';
+            if (cron === '0 */12 * * *') return 'Every 12 hours';
+            if (cron === '0 2 * * 0') return 'Weekly on Sunday at 2:00 AM';
+            if (cron === '0 4 1 * *') return 'Monthly on the 1st at 4:00 AM';
+
+            // Try to build a description
+            let desc = [];
+
+            if (min === '0' && hour.includes('/')) {
+                const interval = hour.split('/')[1];
+                desc.push(`Every ${interval} hours`);
+            } else if (min === '0' && !hour.includes('*')) {
+                const h = parseInt(hour);
+                const ampm = h >= 12 ? 'PM' : 'AM';
+                const h12 = h % 12 || 12;
+                desc.push(`at ${h12}:00 ${ampm}`);
+            }
+
+            if (weekday !== '*') {
+                const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                desc.push(`on ${days[parseInt(weekday)]}`);
+            } else if (day !== '*' && day !== '*/1') {
+                if (day === '1') {
+                    desc.push('on the 1st of the month');
+                } else {
+                    desc.push(`on day ${day} of the month`);
+                }
+            } else if (day === '*' && weekday === '*') {
+                if (!desc.length) desc.push('Daily');
+            }
+
+            return desc.length ? desc.join(' ') : cron;
+        }
+
+        // Show/hide custom schedule
+        document.getElementById('showCustomSchedule').onclick = () => {
+            document.getElementById('customScheduleGroup').classList.toggle('hidden');
+            const link = document.getElementById('showCustomSchedule');
+            link.textContent = document.getElementById('customScheduleGroup').classList.contains('hidden')
+                ? 'Use custom schedule'
+                : 'Hide custom schedule';
+        };
+
+        // Schedule preset buttons
+        document.querySelectorAll('.preset-btn').forEach(btn => {
+            btn.onclick = () => {
+                document.querySelectorAll('.preset-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                selectedSchedule = btn.dataset.cron;
+                document.getElementById('settings_schedule').value = selectedSchedule;
+                document.getElementById('customScheduleGroup').classList.add('hidden');
+                document.getElementById('showCustomSchedule').textContent = 'Use custom schedule';
+            };
+        });
+
+        // Update schedule hint on input
+        document.getElementById('settings_schedule').addEventListener('input', (e) => {
+            const hint = document.getElementById('scheduleHint');
+            const value = e.target.value.trim();
+            if (value) {
+                hint.textContent = '📅 ' + cronToHuman(value);
+                hint.classList.remove('hidden');
+            } else {
+                hint.classList.add('hidden');
+            }
+        });
 
         function showAlert(message, type) {
             const alertBox = document.getElementById('alertBox');
@@ -378,6 +687,8 @@
             // Load data for the tab
             if (tabName === 'status') {
                 loadStatus();
+            } else if (tabName === 'backups') {
+                loadBackups();
             }
         }
 
@@ -444,7 +755,20 @@
             // Update settings form
             document.getElementById('settings_backup_path').value = currentConfig.remote_backup_path || '';
             document.getElementById('settings_storage_path').value = currentConfig.backup_storage_path || '/backup/discourse';
-            document.getElementById('settings_schedule').value = currentConfig.schedule || '0 3 * * *';
+
+            const schedule = currentConfig.schedule || '0 3 * * *';
+            document.getElementById('settings_schedule').value = schedule;
+
+            // Highlight matching preset
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                if (btn.dataset.cron === schedule) {
+                    btn.classList.add('active');
+                    selectedSchedule = schedule;
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
             document.getElementById('settings_daily').value = currentConfig.daily_retention_days || 7;
             document.getElementById('settings_weekly').value = currentConfig.weekly_retention_days || 90;
             document.getElementById('settings_monthly').value = currentConfig.monthly_retention_days || 730;
@@ -504,8 +828,8 @@
                 backup_storage_path: document.getElementById('settings_storage_path').value,
                 schedule: document.getElementById('settings_schedule').value,
                 daily_retention_days: parseInt(document.getElementById('settings_daily').value),
-                weekly_retention_days: parseInt(document.getElementById('settings_weekly').value * 7),
-                monthly_retention_days: parseInt(document.getElementById('settings_monthly').value * 31)
+                weekly_retention_days: parseInt(document.getElementById('settings_weekly').value),
+                monthly_retention_days: parseInt(document.getElementById('settings_monthly').value)
             };
 
             setLoading('saveSettingsBtn', true);
@@ -620,7 +944,7 @@
                 document.getElementById('statusServer').textContent =
                     `${currentConfig.remote_user}@${currentConfig.remote_host}:${currentConfig.remote_port}`;
                 document.getElementById('statusPath').textContent = currentConfig.remote_backup_path;
-                document.getElementById('statusSchedule').textContent = currentConfig.schedule || '0 3 * * * (daily at 3 AM)';
+                document.getElementById('statusSchedule').textContent = cronToHuman(currentConfig.schedule || '0 3 * * *');
             } else {
                 document.getElementById('sshStatus').textContent = '✗ Not configured';
                 document.getElementById('statusServer').textContent = '-';
@@ -628,6 +952,167 @@
                 document.getElementById('statusSchedule').textContent = '-';
             }
         }
+
+        let allBackups = [];
+        let currentBackupFilter = 'all';
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 B';
+            const k = 1024;
+            const sizes = ['B', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
+        }
+
+        function formatDate(timestamp) {
+            const date = new Date(timestamp * 1000);
+            return date.toLocaleString();
+        }
+
+        async function loadBackups() {
+            document.getElementById('backupsLoading').classList.remove('hidden');
+            document.getElementById('backupsEmpty').classList.add('hidden');
+            document.getElementById('backupsTable').classList.add('hidden');
+
+            try {
+                const response = await fetch(getApiUrl('api/list-backups'));
+                const data = await response.json();
+
+                if (data.success) {
+                    allBackups = data.backups;
+                    displayBackups();
+                } else {
+                    showAlert('Failed to load backups: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to load backups: ' + error.message, 'error');
+            } finally {
+                document.getElementById('backupsLoading').classList.add('hidden');
+            }
+        }
+
+        function showBackupType(type) {
+            currentBackupFilter = type;
+
+            // Update tab styling
+            const tabs = document.querySelectorAll('#backupTabsContainer .tab');
+            tabs.forEach((tab, index) => {
+                const types = ['all', 'daily', 'weekly', 'monthly'];
+                if (types[index] === type) {
+                    tab.style.borderBottomColor = '#247494';
+                    tab.style.fontWeight = '600';
+                } else {
+                    tab.style.borderBottomColor = 'transparent';
+                    tab.style.fontWeight = '400';
+                }
+            });
+
+            displayBackups();
+        }
+
+        function displayBackups() {
+            const filtered = currentBackupFilter === 'all'
+                ? allBackups
+                : allBackups.filter(b => b.type === currentBackupFilter);
+
+            if (filtered.length === 0) {
+                document.getElementById('backupsEmpty').classList.remove('hidden');
+                document.getElementById('backupsTable').classList.add('hidden');
+                return;
+            }
+
+            document.getElementById('backupsEmpty').classList.add('hidden');
+            document.getElementById('backupsTable').classList.remove('hidden');
+
+            const tableHTML = `
+                <table class="backup-table">
+                    <thead>
+                        <tr>
+                            <th>Filename</th>
+                            <th>Type</th>
+                            <th>Size</th>
+                            <th>Created</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${filtered.map(backup => `
+                            <tr>
+                                <td style="font-family: monospace; font-size: 12px;">${backup.filename}</td>
+                                <td>
+                                    <span class="backup-type-badge badge-${backup.type}">
+                                        ${backup.type.toUpperCase()}
+                                    </span>
+                                </td>
+                                <td>${formatBytes(backup.size)}</td>
+                                <td>${formatDate(backup.created)}</td>
+                                <td>
+                                    <button class="btn btn-danger btn-small" onclick="deleteBackup('${backup.path}', '${backup.filename}')">
+                                        Delete
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+
+            document.getElementById('backupsTable').innerHTML = tableHTML;
+        }
+
+        async function deleteBackup(filepath, filename) {
+            if (!confirm(`Are you sure you want to delete ${filename}?\n\nThis action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const response = await fetch(getApiUrl('api/delete-backup'), {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ filepath })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('Backup deleted successfully', 'success');
+                    loadBackups(); // Reload the list
+                } else {
+                    showAlert('Failed to delete backup: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to delete backup: ' + error.message, 'error');
+            }
+        }
+
+        // Manual sync button
+        document.getElementById('manualSyncBtn').onclick = async () => {
+            if (!confirm('This will download the latest backup from your Discourse server. Continue?')) {
+                return;
+            }
+
+            setLoading('manualSyncBtn', true);
+
+            try {
+                const response = await fetch(getApiUrl('api/manual-sync'), {
+                    method: 'POST'
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showAlert('✓ Backup sync completed successfully!', 'success');
+                    // Reload backups list after a moment
+                    setTimeout(() => loadBackups(), 1000);
+                } else {
+                    showAlert('✗ Backup sync failed: ' + data.message, 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to sync backup: ' + error.message, 'error');
+            } finally {
+                setLoading('manualSyncBtn', false);
+            }
+        };
 
         // Initialize
         loadConfig();
