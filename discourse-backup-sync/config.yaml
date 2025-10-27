@@ -3,6 +3,7 @@ version: "0.1.2"
 slug: discourse_backup_sync
 description: Automated backup sync for Discourse forums with intelligent retention (daily, weekly, monthly)
 url: https://github.com/jptrsn/ha-discourse-backup-sync
+image: ghcr.io/jptrsn/discourse-backup-sync-{arch}
 arch:
   - armhf
   - armv7
