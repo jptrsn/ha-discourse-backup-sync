@@ -44,7 +44,7 @@ jobs:
       - name: Extract metadata
         id: meta
         run: |
-          VERSION=$(grep '^version:' discourse_backup_sync/config.yaml | awk '{print $2}' | tr -d '"' | tr -d ' ')
+          VERSION=$(grep '^version:' discourse-backup-sync/config.yaml | awk '{print $2}' | tr -d '"' | tr -d ' ')
           if [ -z "$VERSION" ]; then
             VERSION="dev"
           fi
@@ -65,7 +65,7 @@ jobs:
       - name: Build and push
         uses: docker/build-push-action@v5
         with:
-          context: ./discourse_backup_sync
+          context: ./discourse-backup-sync
           platforms: ${{ steps.arch.outputs.platform }}
           push: ${{ github.event_name != 'pull_request' }}
           tags: |
