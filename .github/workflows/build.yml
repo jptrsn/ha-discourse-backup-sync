@@ -44,8 +44,12 @@ jobs:
       - name: Extract metadata
         id: meta
         run: |
-          VERSION=$(grep '^version:' discourse_backup_sync/config.yaml | awk '{print $2}' | tr -d '"')
+          VERSION=$(grep '^version:' discourse_backup_sync/config.yaml | awk '{print $2}' | tr -d '"' | tr -d ' ')
+          if [ -z "$VERSION" ]; then
+            VERSION="dev"
+          fi
           echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Version extracted: $VERSION"
 
       - name: Map architecture
         id: arch
@@ -63,9 +67,9 @@ jobs:
         with:
           context: ./discourse_backup_sync
           platforms: ${{ steps.arch.outputs.platform }}
-          push: true
+          push: ${{ github.event_name != 'pull_request' }}
           tags: |
             ${{ env.REGISTRY }}/${{ github.repository_owner }}/discourse-backup-sync-${{ matrix.arch }}:latest
-            ${{ env.REGISTRY }}/${{ github.repository_owner }}/discourse-backup-sync-${{ matrix.arch }}:${{ steps.meta.outputs.version }}
+            ${{ env.REGISTRY }}/${{ github.repository_owner }}/discourse-backup-sync-${{ matrix.arch }}:v${{ steps.meta.outputs.version }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
